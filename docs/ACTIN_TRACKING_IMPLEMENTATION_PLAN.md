@@ -182,12 +182,12 @@ actin_tracking/
 ### Этап 2 — Dataset API и визуальная проверка (P0)
 
 **Задачи:**
-- [ ] Реализовать `get_frame`, `get_sequence`, итератор без полного preloading, фильтрацию по split, batch collate.
-- [ ] Возвращать grayscale array, boxes XYWH, lazy RLE masks, IDs, metadata, transform history.
-- [ ] Для временных моделей отдавать настоящие упорядоченные последовательности; не считать overlapping windows независимыми videos.
-- [ ] Реализовать augmentations с согласованным применением к кадру и instances; геометрические трансформации на все кадры последовательности единообразно при необходимости.
-- [ ] Реализовать инспектор: overlays masks, skeleton, boxes, цветные track IDs, ground truth trajectories.
-- [ ] Добавить тесты RLE roundtrip, точности больших IDs, обратного преобразования координат после resize/pad/crop.
+- [x] Реализовать `get_frame`, `get_sequence`, итератор без полного preloading, фильтрацию по split, batch collate.
+- [x] Возвращать grayscale array, boxes XYWH, lazy RLE masks, IDs, metadata, transform history.
+- [x] Для временных моделей отдавать настоящие упорядоченные последовательности; не считать overlapping windows независимыми videos.
+- [x] Реализовать augmentations с согласованным применением к кадру и instances; геометрические трансформации на все кадры последовательности единообразно при необходимости.
+- [x] Реализовать инспектор: overlays masks, skeleton, boxes, цветные track IDs, ground truth trajectories.
+- [x] Добавить тесты RLE roundtrip, точности больших IDs, обратного преобразования координат после resize/pad/crop.
 
 **Артефакты:** `src/actin_tracking/data`, визуализации для случайных train/val/real samples, tests.
 

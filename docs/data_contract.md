@@ -41,3 +41,19 @@ image_id и (sequence_id,frame_index). `physical_frames`: file_name → перв
 Не используйте незавершённые индексы для evaluation. Real alternative источник
 сравнивается с основным по per-frame multiset GT без source-local IDs и никогда
 не добавляет новые независимые evaluation кадры.
+
+
+## Frame/Dataset contract этапа 2
+
+`FilamentDataset` читает complete SQLite, grayscale PNG и lazy RLE targets.
+FrameMetadata содержит точные строковые image/source-image/sequence/window IDs;
+для real sequence_id=None, temporal_continuity_confirmed=False. Unknown calibration
+остаётся None. Source bbox сохраняется отдельно от transformed/clipped bbox;
+mask-derived bbox получается явно, исходники не нормализуются молча.
+
+GeometryTrace использует XY edge coordinates и размеры H,W, поддерживает
+resize/pad/crop/flip и inverse coordinates. Restore raster после crop возвращает
+visibility: отброшенные пиксели неизвестны. Пустые после resize/crop instances
+удаляются из текущих targets с записью ID в dropped_instance_ids.
+Batch padding имеет valid_pixels/valid_frames и полную историю координат.
+Полный интерфейс и примеры: [dataset_api.md](dataset_api.md).

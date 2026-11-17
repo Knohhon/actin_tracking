@@ -2,7 +2,8 @@
 
 Фундамент воспроизводимого сравнения методов разметки актиновых филаментов.
 Реализованы окружение, контракт данных, протокол, CLI smoke и потоковый
-аудит/индексирование. Модели и вычисление benchmark-метрик пока не реализованы.
+аудит/индексирование, Dataset API и GT-инспектор. Модели и вычисление
+benchmark-метрик пока не реализованы.
 
 ## Установка и проверка
 
@@ -33,7 +34,9 @@ Smoke не требует большого датасета или GPU. Созд
 - [Протокол benchmark v1](docs/benchmark_protocol.md)
 - [Контракт данных](docs/data_contract.md)
 - [Аудит и SQLite-индекс](docs/data_audit.md)
-- [Результат локальной проверки](docs/stage1_results.md)
+- [Результат аудита](docs/stage1_results.md)
+- [Dataset API и визуализация](docs/dataset_api.md)
+- [Проверка этапа 2](docs/stage2_results.md)
 - [Исходные данные и ограничения](docs/data_overview.md)
 
 Исходные данные неизменяемы и исключены из Git; результаты пишутся в `outputs/`.
@@ -88,3 +91,22 @@ IoU: это overlap, а не подтверждённое пересечение
 
 Под WSL для большого импорта удобно писать SQLite на Linux-диск, например
 `--output /tmp/audit_v021`, затем перенести каталог артефактов в `outputs/`.
+
+## Dataset API и GT-инспектор (этап 2)
+
+```bash
+uv run actin visualize --config configs/datasets/v0.2.1.toml --dataset real_eval --output outputs/preview_real
+uv run actin visualize --config configs/datasets/v0.2.1.toml --dataset synthetic_val --sequence-id 1221647990087 --limit 5 --layers masks boxes skeleton tracks trajectories --output outputs/preview_sequence
+```
+
+Нужен SQLite-кэш этапа 1 (по умолчанию `outputs/stage1_audit`, другой путь —
+`--index-dir`). Экспортируются исходное/current изображение, GT-оверлей,
+сравнение бок о бок и JSON с точными ID/координатами/history. Без селектора
+выбираются 3 уникальных физических кадра с фиксированным seed. `--dry-run`
+показывает конфигурацию без чтения данных. Все слои и аугментации перечислены
+в `actin visualize --help` и [руководстве API](docs/dataset_api.md).
+
+`FilamentDataset` загружает grayscale uint8 и lazy RLE masks, возвращает кадры
+или упорядоченную synthetic sequence. `collate_frames` и `collate_sequences`
+сохраняют masks/IDs/history, добавляют padding и valid masks. Real окна доступны
+через `get_window` только для inspection; iterator real_eval выдаёт 120 кадров.

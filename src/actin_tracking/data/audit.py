@@ -27,6 +27,7 @@ from PIL import Image
 from pycocotools import mask as coco_mask  # type: ignore[import-untyped]
 
 from actin_tracking.data.diagnostics import overlap_sample, skeleton_pixels
+from actin_tracking.data.rle import validate_runs as _validate_runs
 from actin_tracking.data.schemas import exact_id
 
 
@@ -160,43 +161,6 @@ def _image(db: sqlite3.Connection, record: dict[str, Any], synthetic: bool) -> N
         "INSERT OR IGNORE INTO physical_frames(file_name,canonical_image_id) VALUES (?,?)",
         (filename, identifier),
     )
-
-
-def _validate_runs(rle: dict[str, Any]) -> int:
-    """Validate compressed run totals before invoking the native COCO decoder."""
-    counts = rle["counts"]
-    if isinstance(counts, str):
-        runs: list[int] = []
-        offset = 0
-        while offset < len(counts):
-            value = 0
-            shift = 0
-            while True:
-                if offset >= len(counts) or shift > 63:
-                    raise ValueError("Truncated or oversized RLE run")
-                char = ord(counts[offset]) - 48
-                offset += 1
-                if not 0 <= char <= 63:
-                    raise ValueError("Invalid compressed RLE character")
-                value |= (char & 31) << shift
-                shift += 5
-                if not char & 32:
-                    if char & 16:
-                        value |= -1 << shift
-                    break
-            if len(runs) > 2:
-                value += runs[-2]
-            if value < 0:
-                raise ValueError("Negative decoded RLE run")
-            runs.append(value)
-    elif isinstance(counts, list) and all(type(v) is int and v >= 0 for v in counts):
-        runs = counts
-    else:
-        raise ValueError("Invalid RLE counts")
-    size = rle["size"]
-    if sum(runs) != size[0] * size[1]:
-        raise ValueError("RLE runs do not cover the declared image size")
-    return sum(runs[1::2])
 
 
 def _annotation(db: sqlite3.Connection, record: dict[str, Any]) -> None:

@@ -1,0 +1,274 @@
+{
+  "seed": 20261117,
+  "cases": {
+    "augmented": {
+      "dataset": "synthetic_val",
+      "annotation_sha256": "ffcfa1d9a6ed755df6887795adb73426a8bec10c5c0aeb9b6c3286c3b7340af0",
+      "manifest_sha256": "43b0ff8eb5d0240ff6d8e2d018113e1dce26e339f5609803ca6f758cc503364b",
+      "layers": [
+        "boxes",
+        "masks",
+        "skeleton",
+        "tracks"
+      ],
+      "frames": [
+        {
+          "file_name": "1221647990087_000.png",
+          "image_id": "1221647990087000",
+          "current_size": [
+            512,
+            512
+          ],
+          "instances": 282,
+          "dropped_instance_ids": [
+            "122164799008700059",
+            "122164799008700088",
+            "1221647990087000230"
+          ],
+          "comparison": "augmented/0000_ae0d3e065a02_comparison.png"
+        },
+        {
+          "file_name": "1221647990087_001.png",
+          "image_id": "1221647990087001",
+          "current_size": [
+            512,
+            512
+          ],
+          "instances": 279,
+          "dropped_instance_ids": [
+            "122164799008700139",
+            "122164799008700188",
+            "1221647990087001202",
+            "1221647990087001230",
+            "1221647990087001272"
+          ],
+          "comparison": "augmented/0001_438d14d85e70_comparison.png"
+        }
+      ]
+    },
+    "real_eval": {
+      "dataset": "real_eval",
+      "annotation_sha256": "76c1cb997a23bf5648395d09aefd0f941d22a77d42bcc62e84456d6c8ad81e5c",
+      "manifest_sha256": "c01fd657b6128a86c8725775b72ffe8bb6c8284c5eb6fc4e1a9847f07a19250a",
+      "layers": [
+        "boxes",
+        "masks",
+        "skeleton",
+        "tracks"
+      ],
+      "frames": [
+        {
+          "file_name": "108.png",
+          "image_id": "7002",
+          "current_size": [
+            512,
+            512
+          ],
+          "instances": 67,
+          "dropped_instance_ids": [],
+          "comparison": "real_eval/0000_2378926a9bcc_comparison.png"
+        },
+        {
+          "file_name": "221.png",
+          "image_id": "58002",
+          "current_size": [
+            512,
+            512
+          ],
+          "instances": 67,
+          "dropped_instance_ids": [],
+          "comparison": "real_eval/0001_befb5842f7c5_comparison.png"
+        },
+        {
+          "file_name": "134.png",
+          "image_id": "33002",
+          "current_size": [
+            512,
+            512
+          ],
+          "instances": 67,
+          "dropped_instance_ids": [],
+          "comparison": "real_eval/0002_c034a6286f5f_comparison.png"
+        }
+      ]
+    },
+    "synthetic_train": {
+      "dataset": "synthetic_train",
+      "annotation_sha256": "ce63d1817fe100d11f155dd8f1f7096374392506ba1aa5ca90a03b0eccf97115",
+      "manifest_sha256": "da6ab3c2cb57a92c57374e4984599777ec30283f0258560eee0ba1e53fee973f",
+      "layers": [
+        "boxes",
+        "masks",
+        "skeleton",
+        "tracks"
+      ],
+      "frames": [
+        {
+          "file_name": "5104909020958_019.png",
+          "image_id": "5104909020958019",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 270,
+          "dropped_instance_ids": [],
+          "comparison": "synthetic_train/0000_81cf53eee7e8_comparison.png"
+        },
+        {
+          "file_name": "5101110125155_011.png",
+          "image_id": "5101110125155011",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 278,
+          "dropped_instance_ids": [],
+          "comparison": "synthetic_train/0001_ebeb92606fad_comparison.png"
+        },
+        {
+          "file_name": "3103821312169_019.png",
+          "image_id": "3103821312169019",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 263,
+          "dropped_instance_ids": [],
+          "comparison": "synthetic_train/0002_a60b7a5b87cf_comparison.png"
+        }
+      ]
+    },
+    "synthetic_val": {
+      "dataset": "synthetic_val",
+      "annotation_sha256": "ffcfa1d9a6ed755df6887795adb73426a8bec10c5c0aeb9b6c3286c3b7340af0",
+      "manifest_sha256": "23524d641d7de5c0b784ac45c4f6319843fc076e0f727902fc40b6a03fa8dde0",
+      "layers": [
+        "boxes",
+        "masks",
+        "skeleton",
+        "tracks"
+      ],
+      "frames": [
+        {
+          "file_name": "1221647990087_029.png",
+          "image_id": "1221647990087029",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 237,
+          "dropped_instance_ids": [],
+          "comparison": "synthetic_val/0000_925c120f3e66_comparison.png"
+        },
+        {
+          "file_name": "7221647812835_001.png",
+          "image_id": "7221647812835001",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 286,
+          "dropped_instance_ids": [],
+          "comparison": "synthetic_val/0001_5ce7a7675f6a_comparison.png"
+        },
+        {
+          "file_name": "5221647779037_027.png",
+          "image_id": "5221647779037027",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 249,
+          "dropped_instance_ids": [],
+          "comparison": "synthetic_val/0002_780ae8354cef_comparison.png"
+        }
+      ]
+    },
+    "trajectories": {
+      "dataset": "synthetic_val",
+      "annotation_sha256": "ffcfa1d9a6ed755df6887795adb73426a8bec10c5c0aeb9b6c3286c3b7340af0",
+      "manifest_sha256": "fef65adba68c6a49d3d7c3460c783b407fdaa28fde03248408c615eb79de56c7",
+      "layers": [
+        "boxes",
+        "masks",
+        "tracks",
+        "trajectories"
+      ],
+      "frames": [
+        {
+          "file_name": "1221647990087_000.png",
+          "image_id": "1221647990087000",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 285,
+          "dropped_instance_ids": [],
+          "comparison": "trajectories/0000_ae0d3e065a02_comparison.png"
+        },
+        {
+          "file_name": "1221647990087_001.png",
+          "image_id": "1221647990087001",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 284,
+          "dropped_instance_ids": [],
+          "comparison": "trajectories/0001_438d14d85e70_comparison.png"
+        },
+        {
+          "file_name": "1221647990087_002.png",
+          "image_id": "1221647990087002",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 283,
+          "dropped_instance_ids": [],
+          "comparison": "trajectories/0002_9d27b71f1807_comparison.png"
+        },
+        {
+          "file_name": "1221647990087_003.png",
+          "image_id": "1221647990087003",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 280,
+          "dropped_instance_ids": [],
+          "comparison": "trajectories/0003_f33684e0341d_comparison.png"
+        },
+        {
+          "file_name": "1221647990087_004.png",
+          "image_id": "1221647990087004",
+          "current_size": [
+            768,
+            768
+          ],
+          "instances": 277,
+          "dropped_instance_ids": [],
+          "comparison": "trajectories/0004_40179c1180e8_comparison.png"
+        }
+      ]
+    }
+  },
+  "visual_review": [
+    {
+      "comparison": "synthetic_val/0000_925c120f3e66_comparison.png",
+      "sha256": "977757d62d2661cb8958e0a9c545cdf84d8f639e73d98062ec278c571e62993e"
+    },
+    {
+      "comparison": "real_eval/0000_2378926a9bcc_comparison.png",
+      "sha256": "fb528cb09fbf7bc21ddd44835028bf6ed4fd81e8421984c7801e2b6d3caf52fb"
+    },
+    {
+      "comparison": "augmented/0001_438d14d85e70_comparison.png",
+      "sha256": "d6f47d5203affff94d5cb68292d554fc016081c625948f27ca5f21b44759bb69"
+    },
+    {
+      "comparison": "trajectories/0004_40179c1180e8_comparison.png",
+      "sha256": "dee3efe7a307a5463fa452b9238a9c50014cbbcc51a89502400757b5363faa48"
+    }
+  ]
+}

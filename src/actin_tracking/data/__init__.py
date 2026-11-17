@@ -1,1 +1,1 @@
-"""Canonical data contracts; readers and auditing follow in stage 1."""
+"""Audited indexes, streaming grayscale datasets, lazy masks and geometry contracts."""

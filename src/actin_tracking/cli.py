@@ -68,6 +68,36 @@ def main(argv: list[str] | None = None) -> int:
     audit.add_argument("--full-masks", action="store_true")
     audit.add_argument("--seed", type=int, default=20261117)
     audit.add_argument("--dry-run", action="store_true")
+    preview = commands.add_parser("visualize", help="Inspect audited GT frames and sequences")
+    preview.add_argument("--config", type=Path, required=True)
+    preview.add_argument("--data-root", type=Path)
+    preview.add_argument("--index-dir", type=Path, default=Path("outputs/stage1_audit"))
+    preview.add_argument(
+        "--dataset", choices=["synthetic_train", "synthetic_val", "real_eval"], required=True
+    )
+    selector = preview.add_mutually_exclusive_group()
+    selector.add_argument("--image-id")
+    selector.add_argument("--sequence-id")
+    selector.add_argument("--window-id")
+    preview.add_argument("--output", type=Path, required=True)
+    preview.add_argument("--limit", type=int, default=3)
+    preview.add_argument("--max-labels", type=int, default=20)
+    preview.add_argument(
+        "--layers",
+        nargs="*",
+        default=["masks", "boxes", "tracks"],
+        choices=["masks", "boxes", "skeleton", "tracks", "trajectories"],
+    )
+    preview.add_argument("--resize", nargs=2, type=int, metavar=("HEIGHT", "WIDTH"))
+    preview.add_argument("--pad-to", nargs=2, type=int, metavar=("HEIGHT", "WIDTH"))
+    preview.add_argument("--crop-size", nargs=2, type=int, metavar=("HEIGHT", "WIDTH"))
+    preview.add_argument("--hflip", action="store_true")
+    preview.add_argument("--vflip", action="store_true")
+    preview.add_argument("--brightness", nargs=2, type=float, default=[1.0, 1.0])
+    preview.add_argument("--contrast", nargs=2, type=float, default=[1.0, 1.0])
+    preview.add_argument("--noise-std", type=float, default=0.0)
+    preview.add_argument("--seed", type=int, default=20261117)
+    preview.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
     try:
         config = resolve_config(args.config, args.data_root)
@@ -78,9 +108,60 @@ def main(argv: list[str] | None = None) -> int:
                 "mask_sample": args.mask_sample,
                 "full_masks": args.full_masks,
             }
+        if args.command == "visualize":
+            from actin_tracking.data.augmentations import Augmentations
+
+            if args.limit <= 0 or args.max_labels < 0:
+                raise ValueError("--limit must be positive and --max-labels nonnegative")
+            augmentation_options = {
+                "seed": args.seed,
+                "resize": tuple(args.resize) if args.resize else None,
+                "pad_to": tuple(args.pad_to) if args.pad_to else None,
+                "crop_size": tuple(args.crop_size) if args.crop_size else None,
+                "horizontal_flip_probability": float(args.hflip),
+                "vertical_flip_probability": float(args.vflip),
+                "brightness": tuple(args.brightness),
+                "contrast": tuple(args.contrast),
+                "noise_std": args.noise_std,
+            }
+            augmentations = Augmentations(**augmentation_options)
+            snapshot["preview"] = {
+                "split": args.dataset,
+                "index_dir": str(args.index_dir.resolve()),
+                "layers": args.layers,
+                "max_labels": args.max_labels,
+                "augmentations": augmentation_options,
+            }
+            selection = {
+                "image_id": args.image_id,
+                "sequence_id": args.sequence_id,
+                "window_id": args.window_id,
+                "seed": args.seed,
+                "limit": args.limit,
+            }
+            snapshot["preview"]["selection"] = selection
         payload = json.dumps(snapshot, sort_keys=True, indent=2) + "\n"
         if args.dry_run:
             print(payload, end="")
+            return 0
+        if args.command == "visualize":
+            from actin_tracking.data.dataset import FilamentDataset
+            from actin_tracking.visualization.inspector import visualize
+
+            snapshot["git_commit"] = git_output("rev-parse", "HEAD")
+            snapshot["git_status"] = git_output("status", "--porcelain")
+            with FilamentDataset.from_config(
+                config, args.index_dir, args.dataset, augmentations
+            ) as dataset:
+                visualize(
+                    dataset,
+                    args.output,
+                    layers=args.layers,
+                    selection=selection,
+                    config=snapshot,
+                    max_labels=args.max_labels,
+                )
+            print(f"GT preview: {args.output / 'manifest.json'}")
             return 0
         if args.command in ("audit", "index"):
             from actin_tracking.data.reporting import run_audit

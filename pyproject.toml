@@ -12,6 +12,7 @@ dependencies = [
     "numpy==2.2.6",
     "pillow==11.2.1",
     "pycocotools==2.0.8",
+    "scikit-image==0.25.2",
 ]
 
 [project.scripts]

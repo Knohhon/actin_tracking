@@ -18,11 +18,26 @@
   Real windows — не независимые съемки; оценка по уникальным PNG.
 - Исходные данные неизменяемы. Преобразования создают новые версии с provenance.
 
-Схемы этапа 0 проверяют ID и metadata; полный валидатор геометрии/RLE,
-индексирование, проверка уникальности и JSONL export — последующие этапы.
+Схемы этапа 0 проверяют ID и metadata; аудит этапа 1 проверяет RLE/геометрию и уникальность и создаёт SQLite-индекс.
+JSONL export предсказаний появится с evaluator.
 
 ## Run manifest этапа 0
 
 `manifest.json`: schema_version, seed, git_commit, git_status, Python/platform,
 config_sha256 и явная отметка, что данные не проверялись (`dataset_hashes=null`).
 `config.resolved.json`: snapshot с абсолютными локальными путями, не коммитится.
+
+## SQLite audit index
+
+`images`: точный TEXT id, file_name, sequence_id, числовой frame_index, размеры
+и исходный JSON payload. `annotations`: row_id, точные TEXT id/image_id/track_id,
+category_id, payload, хэши масок и ключ детерминированной выборки. Индексы на ID,
+image_id и (sequence_id,frame_index). `physical_frames`: file_name → первая
+каноническая запись, conflicted/valid flags, SHA256 и размер PNG. Конфликтующие
+версии GT сохраняются; canonical не означает автоматическое исправление.
+`issues` хранит все замечания, `metadata` — summary завершённого импорта.
+
+Повреждённый JSON прерывает импорт; частичный индекс не содержит summary.
+Не используйте незавершённые индексы для evaluation. Real alternative источник
+сравнивается с основным по per-frame multiset GT без source-local IDs и никогда
+не добавляет новые независимые evaluation кадры.

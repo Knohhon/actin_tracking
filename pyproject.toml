@@ -7,7 +7,12 @@ name = "actin-tracking"
 version = "0.1.0"
 description = "Reproducible actin filament tracking benchmarks"
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = [
+    "ijson==3.3.0",
+    "numpy==2.2.6",
+    "pillow==11.2.1",
+    "pycocotools==2.0.8",
+]
 
 [project.scripts]
 actin = "actin_tracking.cli:main"

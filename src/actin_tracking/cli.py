@@ -1,10 +1,11 @@
-"""Stage 0 CLI: resolve configuration and record a reproducible smoke run."""
+"""Reproducible dataset auditing and smoke runs."""
 
 import argparse
 import hashlib
 import json
 import platform
 import random
+import sqlite3
 import subprocess
 import sys
 import tomllib
@@ -34,7 +35,9 @@ def resolve_config(path: Path, data_root: Path | None) -> dict[str, Any]:
     if set(config["datasets"]) != expected:
         raise ValueError(f"Expected dataset names: {sorted(expected)}")
     for dataset in config["datasets"].values():
-        for key in ("images", "annotations"):
+        for key in ("images", "annotations", "alternative_annotations"):
+            if key not in dataset:
+                continue
             relative = Path(dataset[key])
             if relative.is_absolute() or ".." in relative.parts:
                 raise ValueError(f"{key} must be a path within the dataset root")
@@ -52,14 +55,52 @@ def main(argv: list[str] | None = None) -> int:
     smoke.add_argument("--output", type=Path, default=Path("outputs/smoke"))
     smoke.add_argument("--seed", type=int, default=20261117)
     smoke.add_argument("--dry-run", action="store_true")
+    audit = commands.add_parser(
+        "audit", aliases=["index"], help="Stream COCO into validated SQLite indexes"
+    )
+    audit.add_argument("--config", "--dataset", dest="config", type=Path, required=True)
+    audit.add_argument("--data-root", type=Path)
+    audit.add_argument("--output", type=Path, required=True)
+    audit.add_argument(
+        "--subset", choices=["synthetic_train", "synthetic_val", "real_eval"], action="append"
+    )
+    audit.add_argument("--mask-sample", type=int, default=100)
+    audit.add_argument("--full-masks", action="store_true")
+    audit.add_argument("--seed", type=int, default=20261117)
+    audit.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
     try:
         config = resolve_config(args.config, args.data_root)
         snapshot = {"dataset": config, "seed": args.seed, "command": args.command}
+        if args.command in ("audit", "index"):
+            snapshot["audit_options"] = {
+                "subsets": args.subset,
+                "mask_sample": args.mask_sample,
+                "full_masks": args.full_masks,
+            }
         payload = json.dumps(snapshot, sort_keys=True, indent=2) + "\n"
         if args.dry_run:
             print(payload, end="")
             return 0
+        if args.command in ("audit", "index"):
+            from actin_tracking.data.reporting import run_audit
+
+            if args.mask_sample < 0:
+                raise ValueError("--mask-sample must be nonnegative")
+            args.output.mkdir(parents=True, exist_ok=False)
+            (args.output / "config.resolved.json").write_text(payload, encoding="utf-8")
+            result = run_audit(
+                config,
+                args.output,
+                args.subset,
+                args.mask_sample,
+                args.full_masks,
+                args.seed,
+                git_output("rev-parse", "HEAD"),
+                git_output("status", "--porcelain"),
+            )
+            print(f"Audit report: {args.output / 'audit_report.md'}")
+            return 1 if result["issue_count"] else 0
         random.seed(args.seed)
         manifest = {
             "schema_version": SCHEMA_VERSION,
@@ -81,7 +122,7 @@ def main(argv: list[str] | None = None) -> int:
         (args.output / "manifest.json").write_text(
             json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
         )
-    except (OSError, ValueError, KeyError, TypeError) as error:
+    except (OSError, ValueError, KeyError, TypeError, sqlite3.DatabaseError) as error:
         parser.exit(2, f"actin: {error}\n")
     print(f"Smoke manifest: {args.output / 'manifest.json'}")
     return 0

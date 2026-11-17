@@ -18,3 +18,4 @@ images = "val_v1_gray"
 annotations = "seq_v1_val_real.rle.json"
 deduplicate_by = "file_name"
 tracking_gt_confirmed = false
+alternative_annotations = "val_real_seqlen3.rle.json"

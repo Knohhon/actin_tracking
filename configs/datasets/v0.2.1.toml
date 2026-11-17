@@ -1,0 +1,21 @@
+schema_version = "1.0"
+# Relative to this file; CLI --data-root overrides this directory.
+root = "../../data/v0.2.1"
+
+[datasets.synthetic_train]
+source = "synthetic"
+images = "train_synt_30_v7_prerendered"
+annotations = "train_synt_30_v7_anns.json"
+
+[datasets.synthetic_val]
+source = "synthetic"
+images = "val_synt_30_v7_prerendered"
+annotations = "val_synt_30_v7_anns.json"
+
+[datasets.real_eval]
+source = "real"
+images = "val_v1_gray"
+annotations = "seq_v1_val_real.rle.json"
+deduplicate_by = "file_name"
+tracking_gt_confirmed = false
+alternative_annotations = "val_real_seqlen3.rle.json"
